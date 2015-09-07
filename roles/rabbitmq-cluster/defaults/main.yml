@@ -1,0 +1,27 @@
+---
+# defaults file for rabbitmq-cluster
+
+rabbitmq_use_upstream_repository: true
+rabbitmq_erlang_cookie: Cet9gmXjhBPYgcrgucQxfEf2
+rabbitmq_ulimit_open_files: 1024
+rabbitmq_cluster_support: no
+rabbitmq_cluster_master: localhost
+rabbitmq_haproxy_support: no
+rabbitmq_vhosts: []
+
+rabbitmq_plugins:
+  - rabbitmq_management
+
+rabbitmq_users:
+  - user: admin
+    password: admin
+    vhost: /
+    configure_priv: .*
+    read_priv: .*
+    write_priv: .*
+    tags: administrator
+
+rabbitmq_users_removed:
+  - guest
+
+

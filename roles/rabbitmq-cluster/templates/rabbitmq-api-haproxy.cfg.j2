@@ -1,0 +1,10 @@
+# HAProxy configuration for RabbitMQ API
+
+{% for host in groups['lb_servers'] %}
+    	listen {{ rabbitmq_amqp_daemonname }} {{ hostvars[host]['ansible_' + iface].ipv4.address }}:{{ rabbitmq_api_port }}
+    	listen {{ rabbitmq_amqp_daemonname }} {{ hostvars[host]['ansible_' + iface].ipv4.address }}:{{ rabbitmq_api_port }}
+{% endfor %}
+balance     {{ rabbitmq_balance }}
+{% for host in groups['rabbitmq_servers'] %}
+       server {{ host }} {{ hostvars[host]['ansible_' + iface].ipv4.address }}:{{ rabbitmq_api_port }}
+{% endfor %}
