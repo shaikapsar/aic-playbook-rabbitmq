@@ -1,0 +1,15 @@
+---
+# handlers file for rabbitmq-cluster
+
+# Restart the haproxy service.
+- name: restart haproxy
+  service:
+    name: haproxy
+    state: restarted
+
+# Reload the haproxy service.
+- name: reload haproxy
+  service:
+    name: haproxy
+    state: reloaded
+

@@ -5,7 +5,7 @@
 - name: start rabbitmq-server
   service:
     name: rabbitmq-server
-    state: started 
+    state: started
 
 # Stop the rabbitmq-server service.
 - name: stop rabbitmq-server
@@ -19,14 +19,3 @@
     name: rabbitmq-server
     state: restarted
 
-# Restart the haproxy service.
-- name: restart haproxy
-  service:
-    name: haproxy 
-    state: restarted
-
-# Reload the haproxy service.
-- name: reload haproxy
-  service: 
-    name: haproxy 
-    state: reloaded

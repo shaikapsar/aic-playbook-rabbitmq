@@ -1,2 +1,111 @@
----
+--- 
 # tasks file for rabbitmq-cluster
+- 
+  name: "add rabbitmq key (Debian)"
+  apt_key: 
+    state: present
+    url: "http://www.rabbitmq.com/rabbitmq-signing-key-public.asc"
+  when: "ansible_os_family == 'Debian'"
+  tags: 
+    - configuration
+    - rabbitmq
+- 
+  name: "add rabbitmq repo (Debian)"
+  apt_repository: 
+    repo: "deb http://www.rabbitmq.com/debian/ testing main"
+    state: present
+    update_cache: true
+  when: "ansible_os_family == 'Debian'"
+  tags: 
+    - configuration
+    - rabbitmq
+- 
+  name: "install packages"
+  apt: 
+    name: rabbitmq-server
+    state: present
+  when: "ansible_os_family == 'Debian'"
+  tags: 
+    - configuration
+    - rabbitmq
+- 
+  name: "shutdown rabbitmq to change cookie and conf file"
+  service: 
+    name: rabbitmq-server
+    state: stopped
+  tags: 
+    - configuration
+    - rabbitmq
+- 
+  name: "cluster rabbitmq servers (clustering)"
+  include: cluster.yml
+  when: rabbitmq_cluster_support
+  tags: 
+    - configuration
+    - rabbitmq  
+- 
+  name: "start rabbiGtmq-server"
+  service: 
+    enabled: true
+    name: rabbitmq-server
+    state: started
+  tags: 
+    - configuration
+    - rabbitmq
+- 
+  name: "enable management plugin"
+  rabbitmq_plugin: 
+    name: rabbitmq_management
+    state: enabled
+  notify: "restart rabbitmq-server"
+  when: rabbitmq_manage_support
+  tags: 
+    - configuration
+    - rabbitmq  
+- 
+  name: "Ensure the users is removed"
+  rabbitmq_user: 
+    state: absent
+    user: "{{ item }}"
+    with_items: rabbitmq_users_removed
+  tags: 
+    - configuration
+    - rabbitmq
+- 
+  name: "Ensure the vhosts is present"
+  rabbitmq_vhost: 
+    name: "{{ item }}"
+    with_items: rabbitmq_vhosts
+  tags: 
+    - configuration
+    - rabbitmq
+- 
+  name: "Ensure the users is present"
+  rabbitmq_user: 
+    configure_priv: "{{ item.configure_priv|default('.*') }}"
+    password: "{{ item.password }}"
+    read_priv: "{{ item.read_priv|default('.*') }}"
+    user: "{{ item.user }}"
+    vhost: "{{ item.vhost|default('/') }}"
+    write_priv: "{{ item.write_priv|default('.*') }}"
+    with_items: rabbitmq_users
+  tags: 
+    - configuration
+    - rabbitmq
+- 
+  name: "Enable the plugins is installed"
+  rabbitmq_plugin: 
+    names: "{{ item }}"
+    state: enabled
+    with_items: rabbitmq_plugins
+  notify: "restart rabbitmq-server"
+  tags: 
+    - configuration
+    - rabbitmq
+- 
+  name: "configure haproxy for rabbitmq servers (load-balancing)"
+  include: haproxy.yml
+  when: rabbitmq_haproxy_support
+  tags: 
+    - configuration
+    - haproxy

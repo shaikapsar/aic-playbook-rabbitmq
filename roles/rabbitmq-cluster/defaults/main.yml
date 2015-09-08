@@ -7,6 +7,9 @@ rabbitmq_ulimit_open_files: 1024
 rabbitmq_cluster_support: no
 rabbitmq_cluster_master: localhost
 rabbitmq_haproxy_support: no
+rabbitmq_management_support: no
+rabbitmq_user_guest_delete: yes
+
 rabbitmq_vhosts: []
 
 rabbitmq_plugins:
@@ -23,5 +26,4 @@ rabbitmq_users:
 
 rabbitmq_users_removed:
   - guest
-
 
