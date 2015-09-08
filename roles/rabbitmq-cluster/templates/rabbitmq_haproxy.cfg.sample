@@ -1,0 +1,8 @@
+listen aqmp_front :5672
+        mode            tcp
+        balance         roundrobin
+        timeout client  3h
+        timeout server  3h
+        option          clitcpka
+        server          aqmp-1 rabbitmq1.domain:5672  check inter 5s rise 2 fall 3
+        server          aqmp-2 rabbitmq2.domain:5672  check inter 5s rise 2 fall 3

@@ -1,10 +1,12 @@
 # HAProxy configuration for RabbitMQ API
 
 {% for host in groups['lb_servers'] %}
-    	listen {{ rabbitmq_amqp_daemonname }} {{ hostvars[host]['ansible_' + iface].ipv4.address }}:{{ rabbitmq_api_port }}
-    	listen {{ rabbitmq_amqp_daemonname }} {{ hostvars[host]['ansible_' + iface].ipv4.address }}:{{ rabbitmq_api_port }}
+    	listen {{ rabbitmq_lb_app }}-api {{ hostvars[host]['ansible_' + iface].ipv4.address }}:{{ rabbitmq_api_port }}
 {% endfor %}
 balance     {{ rabbitmq_balance }}
+option          clitcpka
+mode            http
 {% for host in groups['rabbitmq_servers'] %}
-       server {{ host }} {{ hostvars[host]['ansible_' + iface].ipv4.address }}:{{ rabbitmq_api_port }}
+       server {{ host }} {{ hostvars[host]['ansible_' + iface].ipv4.address }}:{{ rabbitmq_api_port }} check inter 5s rise 2 fall 3
 {% endfor %}
+

@@ -1,0 +1,39 @@
+---
+# tasks file for rabbitmq-cluster haproxy
+-
+  name: Download and install haproxy and socat
+  yum:
+    name: {{ item }}
+    state: present
+  with_items:
+  - haproxy
+  - socat
+  when: 'rabbitmq_haproxy_installation'
+
+- name: Configure the haproxy cnf file with hosts
+  template: src=haproxy.cfg.j2 dest=/etc/haproxy/haproxy.cfg
+  notify: restart haproxy
+  when: 'rabbitmq_haproxy_installation'
+
+- name: Start the haproxy service
+  service: name=haproxy state=started enabled=yes
+  when: 'rabbitmq_haproxy_installation'
+-
+  name: configure haproxy for RabbitMQ AMQP port
+  template:
+    src: rabbitmq-amqp-haproxy.cfg.j2
+    dest: /etc/haproxy/conf.d/{{ rabbitmq_priority }}-{{ rabbitmq_lb_app }}-amqp.cfg
+    mode: 0600
+  when: 'rabbitmq_cluster_support'
+  notify: restart haproxy
+
+-
+  name: configure haproxy for RabbitMQ Management API.
+  template:
+    src: rabbitmq-api-haproxy.cfg.j2
+    dest: /etc/haproxy/conf.d/{{ rabbitmq_priority }}-{{ rabbitmq_lb_app }}-api.cfg
+    mode: 0600
+  when: 'rabbitmq_cluster_support and rabbitmq_management_support'
+  notify: restart haproxy
+
+

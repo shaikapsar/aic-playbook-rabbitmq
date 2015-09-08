@@ -6,9 +6,17 @@ rabbitmq_erlang_cookie: Cet9gmXjhBPYgcrgucQxfEf2
 rabbitmq_ulimit_open_files: 1024
 rabbitmq_cluster_support: no
 rabbitmq_cluster_master: localhost
+rabbitmq_use_longname: true
 rabbitmq_haproxy_support: no
+rabbitmq_haproxy_install: no
 rabbitmq_management_support: no
 rabbitmq_user_guest_delete: yes
+rabbitmq_lb_priority: 001
+rabbitmq_lb_app: rabbitmq-cluster
+rabbitmq_lb_balance: roundrobin
+rabbitmq_amqp_port: 5672
+rabbitmq_api_port: 15672
+
 
 rabbitmq_vhosts: []
 
